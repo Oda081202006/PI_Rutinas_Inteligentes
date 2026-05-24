@@ -1,6 +1,6 @@
 package negocio;
 
 public class MateriasTareas {
-    private String cedula;
+    private String nomobre;
 
 }
