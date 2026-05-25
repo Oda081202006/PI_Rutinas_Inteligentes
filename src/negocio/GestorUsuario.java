@@ -2,23 +2,23 @@ package negocio;
 
 import modelo.Usuario;
 
+import java.util.ArrayList;
+
 public class GestorUsuario {
 
-    private Usuario[] usuarios;
-    private int indice;
+    private ArrayList<Usuario> usuarios;
 
     public GestorUsuario() {
 
-        usuarios = new Usuario[100];
-        indice = 0;
+        usuarios = new ArrayList<>();
 
     }
 
     public boolean correoExiste(String correo) {
 
-        for (int i = 0; i < indice; i++) {
+        for (Usuario usuario : usuarios) {
 
-            if (usuarios[i].getCorreoElectronico().equalsIgnoreCase(correo)) {
+            if (usuario.getCorreoElectronico().equalsIgnoreCase(correo)) {
 
                 return true;
 
@@ -73,7 +73,7 @@ public class GestorUsuario {
 
         }
 
-        // Validar horas
+        // Validar horas disponibles
         if (usuario.getHorasDisponibles() < 0) {
 
             return "Error: las horas disponibles no pueden ser negativas.";
@@ -89,10 +89,8 @@ public class GestorUsuario {
         // Guardar perfil
         usuario.setPerfilViabilidad(perfil);
 
-        // Guardar usuario en el arreglo
-        usuarios[indice] = usuario;
-
-        indice++;
+        // Guardar usuario
+        usuarios.add(usuario);
 
         return "Usuario registrado correctamente. Perfil: " + perfil;
 
@@ -100,39 +98,37 @@ public class GestorUsuario {
 
     public Usuario iniciarSesion(String correo, String contrasena) {
 
-        for (int i = 0; i < indice; i++) {
+        for (Usuario usuario : usuarios) {
 
-            if (usuarios[i].getCorreoElectronico().equalsIgnoreCase(correo)) {
+            // Buscar correo
+            if (usuario.getCorreoElectronico().equalsIgnoreCase(correo)) {
 
                 // Verificar si la cuenta está bloqueada
-                if (usuarios[i].isCuentaBloqueada()) {
-
-                    System.out.println("Cuenta bloqueada temporalmente.");
+                if (usuario.isCuentaBloqueada()) {
 
                     return null;
 
                 }
 
-                // Verificar contraseña correcta
-                if (usuarios[i].getContrasena().equals(contrasena)) {
+                // Verificar contraseña
+                if (usuario.getContrasena().equals(contrasena)) {
 
-                    usuarios[i].setIntentosFallidos(0);
+                    // Reiniciar intentos fallidos
+                    usuario.setIntentosFallidos(0);
 
-                    return usuarios[i];
+                    return usuario;
 
                 } else {
 
                     // Aumentar intentos fallidos
-                    usuarios[i].setIntentosFallidos(
-                            usuarios[i].getIntentosFallidos() + 1
+                    usuario.setIntentosFallidos(
+                            usuario.getIntentosFallidos() + 1
                     );
 
-                    // Bloquear cuenta
-                    if (usuarios[i].getIntentosFallidos() >= 3) {
+                    // Bloquear cuenta si llega a 3 intentos
+                    if (usuario.getIntentosFallidos() >= 3) {
 
-                        usuarios[i].setCuentaBloqueada(true);
-
-                        System.out.println("Cuenta bloqueada temporalmente.");
+                        usuario.setCuentaBloqueada(true);
 
                     }
 
