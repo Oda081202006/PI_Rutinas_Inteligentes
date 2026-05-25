@@ -72,4 +72,17 @@ public class MateriasTareas {
     public String getPrioridad() { return prioridad; }
     public void setPrioridad(String prioridad) { this.prioridad = prioridad; }
 
+    //Mostrar los datos de la materia
+    public String mostrarDatos() {
+        return "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                "MATERIA: " + nombreMateria + "\n" +
+                "Tarea: " + nombreTarea + "\n" +
+                "Fecha de entrega: " + fechaEntrega + "\n" +
+                "Dificultad: " + nivelDificultad + "\n" +
+                "Calificación actual: " + calificacionActual + "\n" +
+                "Nota mínima deseada: " + notaMinimaPersonal + "\n" +
+                "Horas recomendadas: " + horasRecomendadas + " hrs\n" +
+                "PRIORIDAD: " + prioridad + "\n" +
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━";
+    }
 }

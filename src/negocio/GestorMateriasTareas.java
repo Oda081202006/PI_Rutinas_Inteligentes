@@ -90,7 +90,22 @@ public class GestorMateriasTareas {
         }
     }
 
+    //Forma de acceder a todos los datos que guardamos
     public List<MateriasTareas> getListaMaterias() {
         return listaMaterias;
+    }
+
+    public String listarMaterias() {
+        if (listaMaterias.isEmpty()) {
+            return "No hay materias registradas aún.";
+        }
+
+        String texto = "--- LISTA DE MATERIAS Y TAREAS ---\n\n";
+
+        for (MateriasTareas materia : listaMaterias) {
+            texto += materia.mostrarDatos() + "\n\n";
+        }
+
+        return texto;
     }
 }
