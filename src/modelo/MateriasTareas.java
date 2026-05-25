@@ -26,9 +26,8 @@ public class MateriasTareas {
     public void setNombreMateria(String nombreMateria){ this.nombreMateria = nombreMateria;}
 
     //Getter and Setter "nivelDificultad"
-    public String getNivelDificultad(){
-        return nivelDificultad;
-    }
+    public String getNivelDificultad(){ return nivelDificultad; }
+
     public void setNivelDificultad(String nivelDificultad){
         if (nivelDificultad.equalsIgnoreCase("alto") ||
                 nivelDificultad.equalsIgnoreCase("medio") ||
