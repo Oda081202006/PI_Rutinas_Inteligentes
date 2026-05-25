@@ -1,74 +1,149 @@
 package negocio;
 
 import modelo.Usuario;
-import java.util.ArrayList;
 
 public class GestorUsuario {
-    private ArrayList<Usuario> usuarios;
+
+    private Usuario[] usuarios;
+    private int indice;
 
     public GestorUsuario() {
-        usuarios = new ArrayList<>();
+
+        usuarios = new Usuario[100];
+        indice = 0;
+
     }
 
-    public String registrarUsuario(String nombre, String correo, String carrera, int semestre, String contrasena) {
-        if (nombre.isEmpty() || correo.isEmpty() || carrera.isEmpty() || contrasena.isEmpty()) {
-            return "Error: todos los campos son obligatorios.";
+    public boolean correoExiste(String correo) {
+
+        for (int i = 0; i < indice; i++) {
+
+            if (usuarios[i].getCorreoElectronico().equalsIgnoreCase(correo)) {
+
+                return true;
+
+            }
+
         }
 
-        if (!correo.contains("@") || !correo.contains(".")) {
-            return "Error: formato de correo inválido.";
+        return false;
+
+    }
+
+    public String calcularPerfil(int materias, int horas) {
+
+        int promedio = horas / materias;
+
+        if (promedio >= 5) {
+
+            return "EFICIENTE";
+
+        } else if (promedio >= 3) {
+
+            return "RESTRINGIDO";
+
+        } else {
+
+            return "SATURADO";
+
         }
 
-        if (contrasena.length() < 8) {
+    }
+
+    public String registrarUsuario(Usuario usuario) {
+
+        // Validar correo repetido
+        if (correoExiste(usuario.getCorreoElectronico())) {
+
+            return "Error: el correo ya está registrado.";
+
+        }
+
+        // Validar contraseña
+        if (usuario.getContrasena().length() < 8) {
+
             return "Error: la contraseña debe tener mínimo 8 caracteres.";
+
         }
 
-        if (semestre < 1 || semestre > 10) {
-            return "Error: el semestre debe estar entre 1 y 10.";
+        // Validar cantidad de materias
+        if (usuario.getCantidadMaterias() <= 0) {
+
+            return "Error: la cantidad de materias debe ser mayor a cero.";
+
         }
 
-        for (Usuario usuario : usuarios) {
-            if (usuario.getCorreo().equalsIgnoreCase(correo)) {
-                return "Error: el correo ya está registrado.";
-            }
+        // Validar horas
+        if (usuario.getHorasDisponibles() < 0) {
+
+            return "Error: las horas disponibles no pueden ser negativas.";
+
         }
 
-        usuarios.add(new Usuario(nombre, correo, carrera, semestre, contrasena));
-        return "Registro exitoso. Ahora puede iniciar sesión.";
+        // Calcular perfil académico
+        String perfil = calcularPerfil(
+                usuario.getCantidadMaterias(),
+                usuario.getHorasDisponibles()
+        );
+
+        // Guardar perfil
+        usuario.setPerfilViabilidad(perfil);
+
+        // Guardar usuario en el arreglo
+        usuarios[indice] = usuario;
+
+        indice++;
+
+        return "Usuario registrado correctamente. Perfil: " + perfil;
+
     }
 
-    public String iniciarSesion(String correo, String contrasena) {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getCorreo().equalsIgnoreCase(correo)) {
+    public Usuario iniciarSesion(String correo, String contrasena) {
 
-                if (usuario.isBloqueado()) {
-                    return "Usuario bloqueado por superar los 3 intentos fallidos.";
+        for (int i = 0; i < indice; i++) {
+
+            if (usuarios[i].getCorreoElectronico().equalsIgnoreCase(correo)) {
+
+                // Verificar si la cuenta está bloqueada
+                if (usuarios[i].isCuentaBloqueada()) {
+
+                    System.out.println("Cuenta bloqueada temporalmente.");
+
+                    return null;
+
                 }
 
-                if (usuario.getContrasena().equals(contrasena)) {
-                    usuario.reiniciarIntentos();
-                    return "Acceso permitido. Bienvenido/a " + usuario.getNombre();
+                // Verificar contraseña correcta
+                if (usuarios[i].getContrasena().equals(contrasena)) {
+
+                    usuarios[i].setIntentosFallidos(0);
+
+                    return usuarios[i];
+
                 } else {
-                    usuario.aumentarIntentos();
-                    return "Usuario o contraseña incorrectos. Intentos fallidos: " + usuario.getIntentosFallidos();
+
+                    // Aumentar intentos fallidos
+                    usuarios[i].setIntentosFallidos(
+                            usuarios[i].getIntentosFallidos() + 1
+                    );
+
+                    // Bloquear cuenta
+                    if (usuarios[i].getIntentosFallidos() >= 3) {
+
+                        usuarios[i].setCuentaBloqueada(true);
+
+                        System.out.println("Cuenta bloqueada temporalmente.");
+
+                    }
+
                 }
+
             }
+
         }
 
-        return "Usuario no encontrado.";
+        return null;
+
     }
 
-    public String listarUsuarios() {
-        if (usuarios.isEmpty()) {
-            return "No hay usuarios registrados.";
-        }
-
-        String texto = "";
-
-        for (Usuario usuario : usuarios) {
-            texto += usuario.mostrarDatos() + "\n-------------------\n";
-        }
-
-        return texto;
-    }
 }
