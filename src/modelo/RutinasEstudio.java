@@ -1,106 +1,127 @@
 package modelo;
 
 public class RutinasEstudio {
-        private String dia;
-        private String horaInicio;
-        private String horaFin;
-        private int duracionSesionMinutos;
-        private int disponibilidadMaximaMinutos;
-        private String nombreMateria;
-        private String nivelDificultad;
-        private String fechaExamen;
-        private String nombreTarea;
-        private String fechaLimiteTarea;
-        private String prioridad;
-        private boolean esDescanso;
-        private boolean cumplida;
 
-        //Constructores
-        public RutinasEstudio(String dia, String horaInicio, String horaFin,
-                              int duracionSesionMinutos, int disponibilidadMaximaMinutos,
-                              String nombreMateria, String nivelDificultad,
-                              String fechaExamen, String nombreTarea, String fechaLimiteTarea) {
-            this.dia = dia;
-            this.horaInicio = horaInicio;
-            this.horaFin = horaFin;
-            setDuracionSesionMinutos(duracionSesionMinutos);
-            setDisponibilidadMaximaMinutos(disponibilidadMaximaMinutos);
-            this.nombreMateria = nombreMateria;
+    public static class Materia {
+
+        private String nombre;
+        private String nivelDificultad; // "alto", "medio", "bajo"
+
+        public Materia(String nombre, String nivelDificultad) {
+            this.nombre = nombre;
             setNivelDificultad(nivelDificultad);
-            this.fechaExamen = fechaExamen;
-            this.nombreTarea = nombreTarea;
-            this.fechaLimiteTarea = fechaLimiteTarea;
-            this.esDescanso = false;
-            this.cumplida = false;
         }
 
-        //Getter and Setter "dia"
-        public String getDia() { return dia; }
-        public void setDia(String dia) { this.dia = dia; }
+        public String getNombre() { return nombre; }
+        public void setNombre(String nombre) { this.nombre = nombre; }
 
-        //Getter and Setter "horaInicio"
-        public String getHoraInicio() { return horaInicio; }
-        public void setHoraInicio(String horaInicio) { this.horaInicio = horaInicio; }
-
-        //Getter and Setter "horaFin"
-        public String getHoraFin() { return horaFin; }
-        public void setHoraFin(String horaFin) { this.horaFin = horaFin; }
-
-        //Getter and Setter "duracionSesionMinutos"
-        public int getDuracionSesionMinutos() { return duracionSesionMinutos; }
-        public void setDuracionSesionMinutos(int duracionSesionMinutos) {
-            if (duracionSesionMinutos >= 15 && duracionSesionMinutos <= 480)
-                this.duracionSesionMinutos = duracionSesionMinutos;
-            else
-                this.duracionSesionMinutos = 60;
-        }
-
-        //Getter and Setter "disponibilidadMaximaMinutos"
-        public int getDisponibilidadMaximaMinutos() { return disponibilidadMaximaMinutos; }
-        public void setDisponibilidadMaximaMinutos(int disponibilidadMaximaMinutos) {
-            if (disponibilidadMaximaMinutos > 0 && disponibilidadMaximaMinutos <= 720)
-                this.disponibilidadMaximaMinutos = disponibilidadMaximaMinutos;
-            else
-                this.disponibilidadMaximaMinutos = 240;
-        }
-
-        //Getter and Setter "nombreMateria"
-        public String getNombreMateria() { return nombreMateria; }
-        public void setNombreMateria(String nombreMateria) { this.nombreMateria = nombreMateria; }
-
-        //Getter and Setter "nivelDificultad"
         public String getNivelDificultad() { return nivelDificultad; }
         public void setNivelDificultad(String nivelDificultad) {
-            if (nivelDificultad.equalsIgnoreCase("alto") ||
-                    nivelDificultad.equalsIgnoreCase("medio") ||
-                    nivelDificultad.equalsIgnoreCase("bajo"))
-                this.nivelDificultad = nivelDificultad;
-            else
+            if (nivelDificultad.equalsIgnoreCase("alto")
+                    || nivelDificultad.equalsIgnoreCase("medio")
+                    || nivelDificultad.equalsIgnoreCase("bajo")) {
+                this.nivelDificultad = nivelDificultad.toLowerCase();
+            } else {
                 this.nivelDificultad = "medio";
+            }
         }
 
-        //Getter and Setter "fechaExamen"
-        public String getFechaExamen() { return fechaExamen; }
-        public void setFechaExamen(String fechaExamen) { this.fechaExamen = fechaExamen; }
+        @Override
+        public String toString() {
+            return nombre + " [" + nivelDificultad + "]";
+        }
+    }
 
-        //Getter and Setter "nombreTarea"
-        public String getNombreTarea() { return nombreTarea; }
-        public void setNombreTarea(String nombreTarea) { this.nombreTarea = nombreTarea; }
+    public static class Tarea {
 
-        //Getter and Setter "fechaLimiteTarea"
-        public String getFechaLimiteTarea() { return fechaLimiteTarea; }
-        public void setFechaLimiteTarea(String fechaLimiteTarea) { this.fechaLimiteTarea = fechaLimiteTarea; }
+        private String nombre;
+        private String fechaLimite; // formato dd/MM/yyyy
+        private Materia materia;
 
-        //Getter and Setter "prioridad"
-        public String getPrioridad() { return prioridad; }
-        public void setPrioridad(String prioridad) { this.prioridad = prioridad; }
+        public Tarea(String nombre, String fechaLimite, Materia materia) {
+            this.nombre = nombre;
+            this.fechaLimite = fechaLimite;
+            this.materia = materia;
+        }
 
-        //Getter and Setter "esDescanso"
-        public boolean isEsDescanso() { return esDescanso; }
-        public void setEsDescanso(boolean esDescanso) { this.esDescanso = esDescanso; }
+        public String getNombre() { return nombre; }
+        public void setNombre(String nombre) { this.nombre = nombre; }
 
-        //Getter and Setter "cumplida"
-        public boolean isCumplida() { return cumplida; }
-        public void setCumplida(boolean cumplida) { this.cumplida = cumplida; }
+        public String getFechaLimite() { return fechaLimite; }
+        public void setFechaLimite(String fechaLimite) { this.fechaLimite = fechaLimite; }
+
+        public Materia getMateria() { return materia; }
+        public void setMateria(Materia materia) { this.materia = materia; }
+
+        @Override
+        public String toString() {
+            return nombre + " | Limite: " + fechaLimite + " | Materia: " + materia.getNombre();
+        }
+    }
+
+    private String dia;
+    private String horaInicio;
+    private String horaFin;
+    private int duracionMinutos; // entre 15 y 480
+    private boolean esDescanso;
+    private boolean cumplida;
+    private Tarea tarea; // referencia al objeto Tarea (null si es descanso)
+
+    // Constructor para sesion de estudio
+    public RutinasEstudio(String dia, String horaInicio, String horaFin,
+                          int duracionMinutos, Tarea tarea) {
+        this.dia = dia;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        setDuracionMinutos(duracionMinutos);
+        this.tarea = tarea;
+        this.esDescanso = false;
+        this.cumplida = false;
+    }
+
+    // Constructor para bloque de descanso (sin tarea)
+    public RutinasEstudio(String dia, String horaInicio, String horaFin, int duracionMinutos) {
+        this(dia, horaInicio, horaFin, duracionMinutos, null);
+        this.esDescanso = true;
+    }
+
+    public String getDia() { return dia; }
+    public void setDia(String dia) { this.dia = dia; }
+
+    public String getHoraInicio() { return horaInicio; }
+    public void setHoraInicio(String horaInicio) { this.horaInicio = horaInicio; }
+
+    public String getHoraFin() { return horaFin; }
+    public void setHoraFin(String horaFin) { this.horaFin = horaFin; }
+
+    public int getDuracionMinutos() { return duracionMinutos; }
+    public void setDuracionMinutos(int duracionMinutos) {
+        if (duracionMinutos >= 15 && duracionMinutos <= 480) {
+            this.duracionMinutos = duracionMinutos;
+        } else {
+            this.duracionMinutos = 60;
+        }
+    }
+
+    public boolean isEsDescanso() { return esDescanso; }
+    public void setEsDescanso(boolean esDescanso) { this.esDescanso = esDescanso; }
+
+    public boolean isCumplida() { return cumplida; }
+    public void setCumplida(boolean cumplida) { this.cumplida = cumplida; }
+
+    public Tarea getTarea() { return tarea; }
+    public void setTarea(Tarea tarea) { this.tarea = tarea; }
+
+    @Override
+    public String toString() {
+        if (esDescanso) {
+            return dia + " " + horaInicio + "-" + horaFin
+                    + " | DESCANSO (" + duracionMinutos + " min)";
+        }
+        return dia + " " + horaInicio + "-" + horaFin
+                + " | " + tarea.getMateria().getNombre()
+                + " | Tarea: " + tarea.getNombre()
+                + " | " + duracionMinutos + " min"
+                + " | Cumplida: " + cumplida;
+    }
 }
-
