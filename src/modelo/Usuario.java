@@ -1,48 +1,123 @@
 package modelo;
 
 public class Usuario {
-    private String nombre;
-    private String correo;
+
+    private String nombreCompleto;
+    private String correoElectronico;
     private String carrera;
     private int semestre;
+    private int cantidadMaterias;
+    private int horasDisponibles;
     private String contrasena;
+    private String perfilViabilidad;
     private int intentosFallidos;
-    private boolean bloqueado;
+    private boolean cuentaBloqueada;
 
-    public Usuario(String nombre, String correo, String carrera, int semestre, String contrasena) {
-        this.nombre = nombre;
-        this.correo = correo;
+    public Usuario() {
+
+    }
+
+    public Usuario(String nombreCompleto,
+                   String correoElectronico,
+                   String carrera,
+                   int semestre,
+                   int cantidadMaterias,
+                   int horasDisponibles,
+                   String contrasena,
+                   String perfilViabilidad) {
+
+        this.nombreCompleto = nombreCompleto;
+        this.correoElectronico = correoElectronico;
         this.carrera = carrera;
         this.semestre = semestre;
+        this.cantidadMaterias = cantidadMaterias;
+        this.horasDisponibles = horasDisponibles;
         this.contrasena = contrasena;
+        this.perfilViabilidad = perfilViabilidad;
+
         this.intentosFallidos = 0;
-        this.bloqueado = false;
+        this.cuentaBloqueada = false;
+
     }
 
-    public String getNombre() { return nombre; }
-    public String getCorreo() { return correo; }
-    public String getCarrera() { return carrera; }
-    public int getSemestre() { return semestre; }
-    public String getContrasena() { return contrasena; }
-    public int getIntentosFallidos() { return intentosFallidos; }
-    public boolean isBloqueado() { return bloqueado; }
-
-    public void aumentarIntentos() {
-        intentosFallidos++;
-        if (intentosFallidos >= 3) {
-            bloqueado = true;
-        }
+    public String getNombreCompleto() {
+        return nombreCompleto;
     }
 
-    public void reiniciarIntentos() {
-        intentosFallidos = 0;
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
-    public String mostrarDatos() {
-        return "Nombre: " + nombre +
-                "\nCorreo: " + correo +
-                "\nCarrera: " + carrera +
-                "\nSemestre: " + semestre +
-                "\nEstado: " + (bloqueado ? "Bloqueado" : "Activo");
+    public String getCorreoElectronico() {
+        return correoElectronico;
     }
+
+    public void setCorreoElectronico(String correoElectronico) {
+        this.correoElectronico = correoElectronico;
+    }
+
+    public String getCarrera() {
+        return carrera;
+    }
+
+    public void setCarrera(String carrera) {
+        this.carrera = carrera;
+    }
+
+    public int getSemestre() {
+        return semestre;
+    }
+
+    public void setSemestre(int semestre) {
+        this.semestre = semestre;
+    }
+
+    public int getCantidadMaterias() {
+        return cantidadMaterias;
+    }
+
+    public void setCantidadMaterias(int cantidadMaterias) {
+        this.cantidadMaterias = cantidadMaterias;
+    }
+
+    public int getHorasDisponibles() {
+        return horasDisponibles;
+    }
+
+    public void setHorasDisponibles(int horasDisponibles) {
+        this.horasDisponibles = horasDisponibles;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
+
+    public String getPerfilViabilidad() {
+        return perfilViabilidad;
+    }
+
+    public void setPerfilViabilidad(String perfilViabilidad) {
+        this.perfilViabilidad = perfilViabilidad;
+    }
+
+    public int getIntentosFallidos() {
+        return intentosFallidos;
+    }
+
+    public void setIntentosFallidos(int intentosFallidos) {
+        this.intentosFallidos = intentosFallidos;
+    }
+
+    public boolean isCuentaBloqueada() {
+        return cuentaBloqueada;
+    }
+
+    public void setCuentaBloqueada(boolean cuentaBloqueada) {
+        this.cuentaBloqueada = cuentaBloqueada;
+    }
+
 }
