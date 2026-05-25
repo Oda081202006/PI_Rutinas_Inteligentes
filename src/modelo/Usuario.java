@@ -19,37 +19,16 @@ public class Usuario {
         this.bloqueado = false;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public String getCarrera() {
-        return carrera;
-    }
-
-    public int getSemestre() {
-        return semestre;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public int getIntentosFallidos() {
-        return intentosFallidos;
-    }
-
-    public boolean isBloqueado() {
-        return bloqueado;
-    }
+    public String getNombre() { return nombre; }
+    public String getCorreo() { return correo; }
+    public String getCarrera() { return carrera; }
+    public int getSemestre() { return semestre; }
+    public String getContrasena() { return contrasena; }
+    public int getIntentosFallidos() { return intentosFallidos; }
+    public boolean isBloqueado() { return bloqueado; }
 
     public void aumentarIntentos() {
         intentosFallidos++;
-
         if (intentosFallidos >= 3) {
             bloqueado = true;
         }
@@ -59,7 +38,7 @@ public class Usuario {
         intentosFallidos = 0;
     }
 
-    public String mostrarResumen() {
+    public String mostrarDatos() {
         return "Nombre: " + nombre +
                 "\nCorreo: " + correo +
                 "\nCarrera: " + carrera +

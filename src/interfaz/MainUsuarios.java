@@ -1,16 +1,16 @@
 package interfaz;
 
-import negocio.GestorMateriasTareas;
+import negocio.GestorUsuario;
 import javax.swing.JOptionPane;
 
 public class MainUsuarios {
     public static void main(String[] args) {
-        GestorMateriasTareas sistema = new GestorMateriasTareas();
+        GestorUsuario gestorUsuario = new GestorUsuario();
         int opcion;
 
         do {
             opcion = Integer.parseInt(JOptionPane.showInputDialog(
-                    "SISTEMA DE RUTINAS INTELIGENTES\n" +
+                    "GESTIÓN DE USUARIOS\n" +
                             "1. Registrar usuario\n" +
                             "2. Iniciar sesión\n" +
                             "3. Listar usuarios\n" +
@@ -27,7 +27,7 @@ public class MainUsuarios {
                     String contrasena = JOptionPane.showInputDialog("Ingrese contraseña:");
 
                     JOptionPane.showMessageDialog(null,
-                            sistema.registrarUsuario(nombre, correo, carrera, semestre, contrasena));
+                            gestorUsuario.registrarUsuario(nombre, correo, carrera, semestre, contrasena));
                     break;
 
                 case 2:
@@ -35,15 +35,15 @@ public class MainUsuarios {
                     String contrasenaLogin = JOptionPane.showInputDialog("Ingrese contraseña:");
 
                     JOptionPane.showMessageDialog(null,
-                            sistema.iniciarSesion(correoLogin, contrasenaLogin));
+                            gestorUsuario.iniciarSesion(correoLogin, contrasenaLogin));
                     break;
 
                 case 3:
-                    JOptionPane.showMessageDialog(null, sistema.listarUsuarios());
+                    JOptionPane.showMessageDialog(null, gestorUsuario.listarUsuarios());
                     break;
 
                 case 4:
-                    JOptionPane.showMessageDialog(null, "Sistema finalizado.");
+                    JOptionPane.showMessageDialog(null, "Saliendo del módulo de usuarios.");
                     break;
 
                 default:
@@ -53,3 +53,4 @@ public class MainUsuarios {
         } while (opcion != 4);
     }
 }
+//PARTE NICOLL, CUANDO TERMINEN TODAS TOCA LLAMAR A TODOS LOS METODOS Y HACER UN SOLO MENÚ
