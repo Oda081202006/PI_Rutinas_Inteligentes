@@ -1,6 +1,7 @@
 package negocio;
 
-import modelo.MateriasTareas;
+import modelo.Materia;
+import modelo.Tarea;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -8,40 +9,71 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestorMateriasTareas {
-    // El gestor tiene una lista que guarda todas las materias que el estudiante va registrando:
-    private List<MateriasTareas> listaMaterias;
+    private List<Materia> listaMaterias;
+    private List<Tarea> listaTareas;
 
     public GestorMateriasTareas() {
         this.listaMaterias = new ArrayList<>();
+        this.listaTareas = new ArrayList<>();
     }
-    //-
 
-    // Registra materia, valida que sea mayor a 0, si no lanza error y si esta bien crea el objeto materia y calcula
+    // RF3: Registrar materia
     public String registrarMateria(String nombreMateria, String nivelDificultad,
-                                   double calificacionActual, double notaMinimaPersonal,
-                                   String nombreTarea, String fechaEntrega) {
-
+                                   double calificacionActual, double notaMinimaPersonal) {
         if (notaMinimaPersonal <= 0) {
             return "Error: La nota mínima personal debe ser mayor a 0.";
         }
 
-        MateriasTareas materia = new MateriasTareas(nombreMateria, nivelDificultad,
-                calificacionActual, notaMinimaPersonal, nombreTarea, fechaEntrega);
+        Materia materia = new Materia(nombreMateria, nivelDificultad,
+                calificacionActual, notaMinimaPersonal);
 
         double horas = calcularHoras(nivelDificultad, calificacionActual, notaMinimaPersonal);
         materia.setHorasRecomendadas(horas);
 
-        String prioridad = calcularPrioridad(fechaEntrega, nivelDificultad, calificacionActual, notaMinimaPersonal);
-        materia.setPrioridad(prioridad);
+        listaMaterias.add(materia);
 
-        listaMaterias.add(materia); //Guarda todos los datos llenados anteriormente por el estudiante es como decir "la ficha está completa, archívala"
-        return generarMensajeRendimiento(calificacionActual, notaMinimaPersonal); //Retorna el mensaje que le va a aparecer al estudiante, si va bien o no
+        return generarMensajeRendimiento(calificacionActual, notaMinimaPersonal);
     }
 
-    private double calcularHoras(String nivelDificultad, double calificacionActual, double notaMinimaPersonal) {
+    // RF4: Registrar tarea
+    public String registrarTarea(String nombreTarea, String fechaEntrega, String nombreMateria) {
+        Materia materiaEncontrada = buscarMateria(nombreMateria);
+
+        if (materiaEncontrada == null) {
+            return "Error: La materia ingresada no existe en el sistema.";
+        }
+
+        LocalDate hoy = LocalDate.now();
+        LocalDate fecha = LocalDate.parse(fechaEntrega, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        if (fecha.isBefore(hoy)) {
+            return "Error: No se puede registrar una tarea con fecha de entrega ya vencida.";
+        }
+
+        Tarea tarea = new Tarea(nombreTarea, fechaEntrega, materiaEncontrada);
+
+        String prioridad = calcularPrioridad(fechaEntrega, materiaEncontrada.getNivelDificultad(),
+                materiaEncontrada.getCalificacionActual(), materiaEncontrada.getNotaMinimaPersonal());
+        tarea.setPrioridad(prioridad);
+
+        listaTareas.add(tarea);
+
+        return "Tarea registrada correctamente. Prioridad asignada: " + prioridad;
+    }
+
+    private Materia buscarMateria(String nombreMateria) {
+        for (Materia m : listaMaterias) {
+            if (m.getNombreMateria().equalsIgnoreCase(nombreMateria)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    private double calcularHoras(String nivelDificultad, double calificacionActual,
+                                 double notaMinimaPersonal) {
         double horasBase;
 
-        //Asigna las horas base que definimos
         if (nivelDificultad.equalsIgnoreCase("alto")) {
             horasBase = 5;
         } else if (nivelDificultad.equalsIgnoreCase("medio")) {
@@ -50,10 +82,8 @@ public class GestorMateriasTareas {
             horasBase = 2;
         }
 
-        //Si estás por debajo de tu nota mínima, le suma 2 horas extra a las base.
         if (calificacionActual < notaMinimaPersonal) {
             horasBase += 2;
-        //Detecta si el usuario esta pasando con las justas, entonces el programa le aumenta una hora de estudio, porque está cerca de su limite
         } else if (calificacionActual - notaMinimaPersonal <= 1) {
             horasBase += 1;
         }
@@ -63,7 +93,7 @@ public class GestorMateriasTareas {
 
     private String generarMensajeRendimiento(double calificacionActual, double notaMinimaPersonal) {
         if (calificacionActual < notaMinimaPersonal) {
-            return "Materia registrada. Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
+            return "Materia registrada. ⚠️ Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
         } else if (calificacionActual - notaMinimaPersonal <= 1) {
             return "Materia registrada. Advertencia: estás cerca de tu nota mínima.";
         } else {
@@ -77,9 +107,7 @@ public class GestorMateriasTareas {
         LocalDate fecha = LocalDate.parse(fechaEntrega, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         long diasRestantes = ChronoUnit.DAYS.between(hoy, fecha);
 
-        if (diasRestantes < 0) {
-            return "VENCIDA";
-        } else if (diasRestantes <= 2 && calificacionActual < notaMinimaPersonal) {
+        if (diasRestantes <= 2 && calificacionActual < notaMinimaPersonal) {
             return "CRÍTICA";
         } else if (diasRestantes <= 5 || nivelDificultad.equalsIgnoreCase("alto")) {
             return "ALTA";
@@ -90,22 +118,28 @@ public class GestorMateriasTareas {
         }
     }
 
-    //Forma de acceder a todos los datos que guardamos
-    public List<MateriasTareas> getListaMaterias() {
-        return listaMaterias;
-    }
+    public List<Materia> getListaMaterias() { return listaMaterias; }
+    public List<Tarea> getListaTareas() { return listaTareas; }
 
     public String listarMaterias() {
         if (listaMaterias.isEmpty()) {
             return "No hay materias registradas aún.";
         }
-
-        String texto = "--- LISTA DE MATERIAS Y TAREAS ---\n\n";
-
-        for (MateriasTareas materia : listaMaterias) {
-            texto += materia.mostrarDatos() + "\n\n";
+        String texto = "--- LISTA DE MATERIAS ---\n\n";
+        for (Materia m : listaMaterias) {
+            texto += m.mostrarDatos() + "\n\n";
         }
+        return texto;
+    }
 
+    public String listarTareas() {
+        if (listaTareas.isEmpty()) {
+            return "No hay tareas registradas aún.";
+        }
+        String texto = "--- LISTA DE TAREAS ---\n\n";
+        for (Tarea t : listaTareas) {
+            texto += t.mostrarDatos() + "\n\n";
+        }
         return texto;
     }
 }
