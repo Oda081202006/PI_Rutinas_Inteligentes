@@ -1,6 +1,5 @@
 package negocio;
 
-
 import modelo.RutinasEstudio;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,49 +22,49 @@ public class GestorRutinas {
         if (sesion.isEsDescanso() || sesion.getTarea() == null) {
             return "N/A";
         }
-        String fechaLimiteStr = sesion.getTarea().getFechaLimite();
+        String fechaLimiteStr = sesion.getTarea().getFechaEntrega();
         LocalDate hoy = LocalDate.now();
         LocalDate fechaLimite = LocalDate.parse(fechaLimiteStr,
                 DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         long diasRestantes = ChronoUnit.DAYS.between(hoy, fechaLimite);
         String dificultad = sesion.getTarea().getMateria().getNivelDificultad();
 
-        if (diasRestantes < 0)                                          return "VENCIDA";
-        else if (diasRestantes <= 2 && dificultad.equals("alto"))       return "CRITICA";
-        else if (diasRestantes <= 5 || dificultad.equals("alto"))       return "ALTA";
-        else if (diasRestantes <= 10 && dificultad.equals("medio"))     return "MEDIA";
-        else                                                            return "BAJA";
+        if (diasRestantes < 0)                                         return "VENCIDA";
+        else if (diasRestantes <= 2 && dificultad.equals("alto"))      return "CRITICA";
+        else if (diasRestantes <= 5 || dificultad.equals("alto"))      return "ALTA";
+        else if (diasRestantes <= 10 && dificultad.equals("medio"))    return "MEDIA";
+        else                                                           return "BAJA";
     }
 
     public String marcarCumplida(String nombreMateria) {
         for (RutinasEstudio s : rutinaSemanal) {
             if (!s.isEsDescanso()
-                    && s.getTarea().getMateria().getNombre().equalsIgnoreCase(nombreMateria)) {
+                    && s.getTarea().getMateria().getNombreMateria().equalsIgnoreCase(nombreMateria)) {
                 s.setCumplida(true);
-                return "Sesion de '" + nombreMateria + "' marcada como cumplida.";
+                return "Sesión de '" + nombreMateria + "' marcada como cumplida.";
             }
         }
-        return "No se encontro la materia '" + nombreMateria + "' en la rutina.";
+        return "No se encontró la materia '" + nombreMateria + "' en la rutina.";
     }
 
     public String reprogramarSesion(String nombreMateria, String nuevoDia,
                                     String nuevaHoraInicio, String nuevaHoraFin) {
         for (RutinasEstudio s : rutinaSemanal) {
             if (!s.isEsDescanso()
-                    && s.getTarea().getMateria().getNombre().equalsIgnoreCase(nombreMateria)) {
+                    && s.getTarea().getMateria().getNombreMateria().equalsIgnoreCase(nombreMateria)) {
                 s.setDia(nuevoDia);
                 s.setHoraInicio(nuevaHoraInicio);
                 s.setHoraFin(nuevaHoraFin);
-                return "Sesion de '" + nombreMateria + "' reprogramada al " + nuevoDia
+                return "Sesión de '" + nombreMateria + "' reprogramada al " + nuevoDia
                         + " de " + nuevaHoraInicio + " a " + nuevaHoraFin + ".";
             }
         }
-        return "No se encontro la materia '" + nombreMateria + "' en la rutina.";
+        return "No se encontró la materia '" + nombreMateria + "' en la rutina.";
     }
 
     public void mostrarRutina() {
         if (rutinaSemanal.isEmpty()) {
-            System.out.println("La rutina esta vacia.");
+            System.out.println("La rutina está vacía.");
             return;
         }
         System.out.println("===== RUTINA SEMANAL =====");
