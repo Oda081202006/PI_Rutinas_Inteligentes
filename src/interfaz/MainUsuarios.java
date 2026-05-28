@@ -8,6 +8,8 @@ import negocio.GestorMateriasTareas;
 import negocio.GestorRutinas;
 import negocio.GestorUsuario;
 import javax.swing.JOptionPane;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class MainUsuarios {
 
@@ -40,7 +42,8 @@ public class MainUsuarios {
 
     // ─── REGISTRO ───────────────────────────────────────
     static void registrarUsuario() {
-        String nombre = JOptionPane.showInputDialog("Nombre completo:");
+        String
+                nombre = JOptionPane.showInputDialog("Nombre completo:");
         String correo = JOptionPane.showInputDialog("Correo electrónico:");
         String carrera = JOptionPane.showInputDialog("Carrera:");
         int semestre = Integer.parseInt(JOptionPane.showInputDialog("Semestre:"));
@@ -149,9 +152,24 @@ public class MainUsuarios {
         String dia = JOptionPane.showInputDialog("Día (Lunes/Martes/...):");
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
-        int duracion = Integer.parseInt(JOptionPane.showInputDialog("Duración en minutos:"));
 
-        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, duracion, tareaEncontrada);
+        for (RutinasEstudio rutina : gestorRutinas.getRutinaSemanal()) {
+            if(rutina.getDia().equals(dia) && rutina.getHoraFin().equals(horaInicio) && tareaEncontrada.getPrioridad().equals("alta")){
+                LocalTime inicio = LocalTime.parse(horaInicio);
+                LocalTime fin = LocalTime.parse(horaFin);
+                LocalTime inicioMas15 = inicio.plusMinutes(15);
+                LocalTime finMas15 = fin.plusMinutes(15);
+                String inicioString = inicioMas15.format(DateTimeFormatter.ofPattern("HH:mm"));
+                String finString = finMas15.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+                horaInicio = inicioString;
+                horaFin = finString;
+            }
+
+        }
+
+
+        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, 1, tareaEncontrada);
         gestorRutinas.agregarSesion(sesion);
         JOptionPane.showMessageDialog(null, "Sesión agregada correctamente a la rutina.");
     }

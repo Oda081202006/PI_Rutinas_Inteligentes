@@ -1,5 +1,8 @@
 package modelo;
 
+import java.time.Duration;
+import java.time.LocalTime;
+
 public class RutinasEstudio {
 
     private String dia;
@@ -37,11 +40,11 @@ public class RutinasEstudio {
 
     public int getDuracionMinutos() { return duracionMinutos; }
     public void setDuracionMinutos(int duracionMinutos) {
-        if (duracionMinutos >= 15 && duracionMinutos <= 480) {
-            this.duracionMinutos = duracionMinutos;
-        } else {
-            this.duracionMinutos = 60;
-        }
+        LocalTime inicio = LocalTime.parse(horaInicio);
+        LocalTime fin = LocalTime.parse(horaFin);
+
+        Duration duracion = Duration.between(inicio, fin);
+        this.duracionMinutos = (int) duracion.toMinutes();
     }
 
     public boolean isEsDescanso() { return esDescanso; }

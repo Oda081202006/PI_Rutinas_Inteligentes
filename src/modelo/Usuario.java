@@ -13,9 +13,7 @@ public class Usuario {
     private int intentosFallidos;
     private boolean cuentaBloqueada;
 
-    public Usuario() {
 
-    }
 
     public Usuario(String nombreCompleto,
                    String correoElectronico,
@@ -119,5 +117,4 @@ public class Usuario {
     public void setCuentaBloqueada(boolean cuentaBloqueada) {
         this.cuentaBloqueada = cuentaBloqueada;
     }
-
 }
