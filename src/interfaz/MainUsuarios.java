@@ -133,10 +133,10 @@ public class MainUsuarios {
                 if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && anio >= 2026) {
                     break;
                 } else {
-                    JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.\nFormato: dd/MM/yyyy");
+                    JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Formato incorrecto, inténtelo de nuevo.\nFormato: dd/MM/yyyy");
+                JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
             }
         }
 
