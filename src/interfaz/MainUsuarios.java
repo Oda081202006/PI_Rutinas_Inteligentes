@@ -119,7 +119,26 @@ public class MainUsuarios {
     static void registrarTarea() {
         String nombreTarea = JOptionPane.showInputDialog("Nombre de la tarea:");
         String nombreMateria = JOptionPane.showInputDialog("Materia asociada:");
-        String fechaEntrega = JOptionPane.showInputDialog("Fecha de entrega (dd/MM/yyyy):");
+
+        String fechaEntrega = "";
+        while (true) {
+            fechaEntrega = JOptionPane.showInputDialog("Fecha de entrega (dd/MM/yyyy):");
+            String[] partes = fechaEntrega.split("/");
+
+            if (partes.length == 3) {
+                int dia = Integer.parseInt(partes[0]);
+                int mes = Integer.parseInt(partes[1]);
+                int anio = Integer.parseInt(partes[2]);
+
+                if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && anio >= 2026) {
+                    break;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.\nFormato: dd/MM/yyyy");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Formato incorrecto, inténtelo de nuevo.\nFormato: dd/MM/yyyy");
+            }
+        }
 
         String resultado = gestorMaterias.registrarTarea(nombreTarea, fechaEntrega, nombreMateria);
         JOptionPane.showMessageDialog(null, resultado);
