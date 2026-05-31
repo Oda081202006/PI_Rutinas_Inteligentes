@@ -224,7 +224,7 @@ public class MainUsuarios {
             Tarea t = gestorMaterias.getListaTareas().get(i);
             lista += (i + 1) + ". " + t.getNombreTarea() +
                     " - Materia: " + t.getMateria().getNombreMateria() +
-                    " - Estado: " + (t.isCompletada() ? "COMPLETADA ✅" : "PENDIENTE ⏳") + "\n";
+                    " - Estado: " + (t.isCompletada() ? "COMPLETADA" : "PENDIENTE") + "\n";
         }
 
         int indice = Integer.parseInt(JOptionPane.showInputDialog(lista)) - 1;
@@ -258,6 +258,7 @@ public class MainUsuarios {
             Tarea t = gestorMaterias.getListaTareas().get(i);
             listaTareas += (i + 1) + ". " + t.getNombreTarea() +
                     " - Materia: " + t.getMateria().getNombreMateria() +
+                    " - Fecha entrega: " + t.getFechaEntrega() +
                     " - Prioridad: " + t.getPrioridad() + "\n";
         }
 
@@ -270,21 +271,97 @@ public class MainUsuarios {
 
         Tarea tareaSeleccionada = gestorMaterias.getListaTareas().get(indice);
 
-        String dia = JOptionPane.showInputDialog("Día (Lunes/Martes/...):");
+        // Pedir fecha exacta de la sesión
+        String fechaSesion = "";
+        while (true) {
+            fechaSesion = JOptionPane.showInputDialog("Fecha de la sesión (dd/MM/yyyy):");
+            String[] partes = fechaSesion.split("/");
+
+            if (partes.length == 3) {
+                int dia = Integer.parseInt(partes[0]);
+                int mes = Integer.parseInt(partes[1]);
+                int anio = Integer.parseInt(partes[2]);
+
+                if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && anio >= 2026) {
+                    LocalDate fechaSesionDate = LocalDate.of(anio, mes, dia);
+                    LocalDate hoy = LocalDate.now();
+                    LocalDate fechaEntrega = LocalDate.parse(tareaSeleccionada.getFechaEntrega(),
+                            java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                    if (fechaSesionDate.isBefore(hoy)) {
+                        JOptionPane.showMessageDialog(null, "La fecha ya pasó, ingrese una fecha futura.");
+                    } else if (fechaSesionDate.isAfter(fechaEntrega)) {
+                        JOptionPane.showMessageDialog(null, "La sesión no puede ser después de la fecha de entrega ("
+                                + tareaSeleccionada.getFechaEntrega() + ").");
+                    } else {
+                        break;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
+            }
+        }
+
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
 
-        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, 0, tareaSeleccionada);
+        // Validar conflicto de horario
+        for (RutinasEstudio s : gestorRutinas.getRutinaSemanal()) {
+            if (s.getDia().equals(fechaSesion) &&
+                    s.getHoraInicio().equals(horaInicio)) {
+                JOptionPane.showMessageDialog(null, "Ya tienes una sesión en ese horario, elige otro.");
+                return;
+            }
+        }
+
+        RutinasEstudio sesion = new RutinasEstudio(fechaSesion, horaInicio, horaFin, 0, tareaSeleccionada);
         gestorRutinas.agregarSesion(sesion);
         JOptionPane.showMessageDialog(null, "Sesión agregada correctamente a la rutina.");
     }
 
     static void agregarSesionSinTarea() {
-        String dia = JOptionPane.showInputDialog("Día (Lunes/Martes/...):");
+        String fechaSesion = "";
+        while (true) {
+            fechaSesion = JOptionPane.showInputDialog("Fecha de la sesión (dd/MM/yyyy):");
+            String[] partes = fechaSesion.split("/");
+
+            if (partes.length == 3) {
+                int dia = Integer.parseInt(partes[0]);
+                int mes = Integer.parseInt(partes[1]);
+                int anio = Integer.parseInt(partes[2]);
+
+                if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && anio >= 2026) {
+                    LocalDate fechaSesionDate = LocalDate.of(anio, mes, dia);
+                    LocalDate hoy = LocalDate.now();
+
+                    if (fechaSesionDate.isBefore(hoy)) {
+                        JOptionPane.showMessageDialog(null, "La fecha ya pasó, ingrese una fecha futura.");
+                    } else {
+                        break;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
+            }
+        }
+
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
 
-        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, 0, null);
+        // Validar conflicto de horario
+        for (RutinasEstudio s : gestorRutinas.getRutinaSemanal()) {
+            if (s.getDia().equals(fechaSesion) &&
+                    s.getHoraInicio().equals(horaInicio)) {
+                JOptionPane.showMessageDialog(null, "Ya tienes una sesión en ese horario, elige otro.");
+                return;
+            }
+        }
+
+        RutinasEstudio sesion = new RutinasEstudio(fechaSesion, horaInicio, horaFin, 0, null);
         gestorRutinas.agregarSesion(sesion);
         JOptionPane.showMessageDialog(null, "Sesión de estudio agregada correctamente a la rutina.");
     }
