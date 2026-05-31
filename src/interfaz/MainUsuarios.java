@@ -8,6 +8,7 @@ import negocio.GestorMateriasTareas;
 import negocio.GestorRutinas;
 import negocio.GestorUsuario;
 import javax.swing.JOptionPane;
+import java.time.LocalDate;
 
 public class MainUsuarios {
 
@@ -131,7 +132,14 @@ public class MainUsuarios {
                 int anio = Integer.parseInt(partes[2]);
 
                 if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && anio >= 2026) {
-                    break;
+                    LocalDate fechaIngresada = LocalDate.of(anio, mes, dia);
+                    LocalDate hoy = LocalDate.now();
+
+                    if (fechaIngresada.isBefore(hoy) || fechaIngresada.isEqual(hoy)) {
+                        JOptionPane.showMessageDialog(null, "La fecha ya pasó, ingrese una fecha futura.");
+                    } else {
+                        break;
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
                 }
