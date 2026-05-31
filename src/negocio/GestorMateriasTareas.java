@@ -84,7 +84,7 @@ public class GestorMateriasTareas {
 
         if (calificacionActual < notaMinimaPersonal) {
             horasBase += 2;
-        } else if (calificacionActual - notaMinimaPersonal <= 1) {
+        } else if (calificacionActual - notaMinimaPersonal < 1) {
             horasBase += 1;
         }
 
@@ -93,8 +93,8 @@ public class GestorMateriasTareas {
 
     private String generarMensajeRendimiento(double calificacionActual, double notaMinimaPersonal) {
         if (calificacionActual < notaMinimaPersonal) {
-            return "Materia registrada. ⚠️ Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
-        } else if (calificacionActual - notaMinimaPersonal <= 1) {
+            return "Materia registrada. Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
+        } else if (calificacionActual - notaMinimaPersonal < 1) {
             return "Materia registrada. Advertencia: estás cerca de tu nota mínima.";
         } else {
             return "Materia registrada. ¡Vas bien, mantén el ritmo!";
