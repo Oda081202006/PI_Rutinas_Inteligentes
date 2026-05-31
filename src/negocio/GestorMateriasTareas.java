@@ -72,7 +72,7 @@ public class GestorMateriasTareas {
 
         t.setCompletada(true);
         return "Tarea '" + t.getNombreTarea() + "' de la materia '" +
-                t.getMateria().getNombreMateria() + "' marcada como completada. ✅";
+                t.getMateria().getNombreMateria() + "' marcada como completada.";
     }
 
     public String eliminarMateria(int indice) {
@@ -134,7 +134,7 @@ public class GestorMateriasTareas {
 
     private String generarMensajeRendimiento(double calificacionActual, double notaMinimaPersonal) {
         if (calificacionActual < notaMinimaPersonal) {
-            return "Materia registrada. ⚠️ Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
+            return "Materia registrada. Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
         } else if (calificacionActual - notaMinimaPersonal < 1) {
             return "Materia registrada. Advertencia: estás cerca de tu nota mínima.";
         } else {

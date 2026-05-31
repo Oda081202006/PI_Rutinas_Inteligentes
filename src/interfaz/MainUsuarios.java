@@ -108,6 +108,12 @@ public class MainUsuarios {
     }
 
     static void registrarMateria() {
+        if (gestorMaterias.getListaMaterias().size() >= usuarioActivo.getCantidadMaterias()) {
+            JOptionPane.showMessageDialog(null, "Ya registraste todas tus materias. " +
+                    "Tienes un máximo de " + usuarioActivo.getCantidadMaterias() + " materias.");
+            return;
+        }
+
         String nombre = JOptionPane.showInputDialog("Nombre de la materia:");
         String dificultad = JOptionPane.showInputDialog("Nivel de dificultad (alto/medio/bajo):");
         double calificacion = Double.parseDouble(JOptionPane.showInputDialog("Calificación actual (0-10):"));
