@@ -8,8 +8,6 @@ import negocio.GestorMateriasTareas;
 import negocio.GestorRutinas;
 import negocio.GestorUsuario;
 import javax.swing.JOptionPane;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class MainUsuarios {
 
@@ -40,10 +38,8 @@ public class MainUsuarios {
         } while (opcion != 0);
     }
 
-    // ─── REGISTRO ───────────────────────────────────────
     static void registrarUsuario() {
-        String
-                nombre = JOptionPane.showInputDialog("Nombre completo:");
+        String nombre = JOptionPane.showInputDialog("Nombre completo:");
         String correo = JOptionPane.showInputDialog("Correo electrónico:");
         String carrera = JOptionPane.showInputDialog("Carrera:");
         int semestre = Integer.parseInt(JOptionPane.showInputDialog("Semestre:"));
@@ -56,7 +52,6 @@ public class MainUsuarios {
         JOptionPane.showMessageDialog(null, resultado);
     }
 
-    // ─── INICIO DE SESIÓN ────────────────────────────────
     static void iniciarSesion() {
         String correo = JOptionPane.showInputDialog("Correo electrónico:");
         String contrasena = JOptionPane.showInputDialog("Contraseña:");
@@ -71,7 +66,6 @@ public class MainUsuarios {
         }
     }
 
-    // ─── MENÚ PRINCIPAL ──────────────────────────────────
     static void menuPrincipal() {
         int opcion;
         do {
@@ -83,10 +77,13 @@ public class MainUsuarios {
                             "2. Registrar tarea\n" +
                             "3. Ver materias\n" +
                             "4. Ver tareas\n" +
-                            "5. Agregar sesión a rutina\n" +
-                            "6. Ver rutina semanal\n" +
-                            "7. Reprogramar sesión\n" +
-                            "8. Marcar sesión como cumplida\n" +
+                            "5. Eliminar materia\n" +
+                            "6. Eliminar tarea\n" +
+                            "7. Marcar tarea como completada\n" +
+                            "8. Agregar sesión a rutina\n" +
+                            "9. Ver rutina semanal\n" +
+                            "10. Reprogramar sesión\n" +
+                            "11. Marcar sesión como cumplida\n" +
                             "0. Cerrar sesión\n" +
                             "════════════════════════════\n" +
                             "Seleccione una opción:"));
@@ -96,17 +93,19 @@ public class MainUsuarios {
                 case 2 -> registrarTarea();
                 case 3 -> JOptionPane.showMessageDialog(null, gestorMaterias.listarMaterias());
                 case 4 -> JOptionPane.showMessageDialog(null, gestorMaterias.listarTareas());
-                case 5 -> agregarSesion();
-                case 6 -> verRutina();
-                case 7 -> reprogramarSesion();
-                case 8 -> marcarCumplida();
+                case 5 -> eliminarMateria();
+                case 6 -> eliminarTarea();
+                case 7 -> marcarTareaCompletada();
+                case 8 -> agregarSesion();
+                case 9 -> verRutina();
+                case 10 -> reprogramarSesion();
+                case 11 -> marcarCumplida();
                 case 0 -> JOptionPane.showMessageDialog(null, "Sesión cerrada.");
                 default -> JOptionPane.showMessageDialog(null, "Opción no válida.");
             }
         } while (opcion != 0);
     }
 
-    // ─── REGISTRAR MATERIA ───────────────────────────────
     static void registrarMateria() {
         String nombre = JOptionPane.showInputDialog("Nombre de la materia:");
         String dificultad = JOptionPane.showInputDialog("Nivel de dificultad (alto/medio/bajo):");
@@ -117,7 +116,6 @@ public class MainUsuarios {
         JOptionPane.showMessageDialog(null, resultado);
     }
 
-    // ─── REGISTRAR TAREA ─────────────────────────────────
     static void registrarTarea() {
         String nombreTarea = JOptionPane.showInputDialog("Nombre de la tarea:");
         String nombreMateria = JOptionPane.showInputDialog("Materia asociada:");
@@ -127,54 +125,93 @@ public class MainUsuarios {
         JOptionPane.showMessageDialog(null, resultado);
     }
 
-    // ─── AGREGAR SESIÓN ──────────────────────────────────
+    static void eliminarMateria() {
+        if (gestorMaterias.getListaMaterias().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay materias registradas.");
+            return;
+        }
+
+        String lista = "Seleccione la materia a eliminar:\n\n";
+        for (int i = 0; i < gestorMaterias.getListaMaterias().size(); i++) {
+            Materia m = gestorMaterias.getListaMaterias().get(i);
+            lista += (i + 1) + ". " + m.getNombreMateria() + "\n";
+        }
+
+        int indice = Integer.parseInt(JOptionPane.showInputDialog(lista)) - 1;
+        String resultado = gestorMaterias.eliminarMateria(indice);
+        JOptionPane.showMessageDialog(null, resultado);
+    }
+
+    static void eliminarTarea() {
+        if (gestorMaterias.getListaTareas().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay tareas registradas.");
+            return;
+        }
+
+        String lista = "Seleccione la tarea a eliminar:\n\n";
+        for (int i = 0; i < gestorMaterias.getListaTareas().size(); i++) {
+            Tarea t = gestorMaterias.getListaTareas().get(i);
+            lista += (i + 1) + ". " + t.getNombreTarea() +
+                    " - Materia: " + t.getMateria().getNombreMateria() + "\n";
+        }
+
+        int indice = Integer.parseInt(JOptionPane.showInputDialog(lista)) - 1;
+        String resultado = gestorMaterias.eliminarTarea(indice);
+        JOptionPane.showMessageDialog(null, resultado);
+    }
+
+    static void marcarTareaCompletada() {
+        if (gestorMaterias.getListaTareas().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay tareas registradas.");
+            return;
+        }
+
+        String lista = "Seleccione la tarea a marcar como completada:\n\n";
+        for (int i = 0; i < gestorMaterias.getListaTareas().size(); i++) {
+            Tarea t = gestorMaterias.getListaTareas().get(i);
+            lista += (i + 1) + ". " + t.getNombreTarea() +
+                    " - Materia: " + t.getMateria().getNombreMateria() +
+                    " - Estado: " + (t.isCompletada() ? "COMPLETADA ✅" : "PENDIENTE ⏳") + "\n";
+        }
+
+        int indice = Integer.parseInt(JOptionPane.showInputDialog(lista)) - 1;
+        String resultado = gestorMaterias.marcarTareaCompletada(indice);
+        JOptionPane.showMessageDialog(null, resultado);
+    }
+
     static void agregarSesion() {
         if (gestorMaterias.getListaTareas().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Primero debes registrar al menos una tarea.");
             return;
         }
 
-        String nombreMateria = JOptionPane.showInputDialog("Nombre de la materia para la sesión:");
-        Tarea tareaEncontrada = null;
-
-        for (Tarea t : gestorMaterias.getListaTareas()) {
-            if (t.getMateria().getNombreMateria().equalsIgnoreCase(nombreMateria)) {
-                tareaEncontrada = t;
-                break;
-            }
+        String listaTareas = "Seleccione la tarea para la sesión:\n\n";
+        for (int i = 0; i < gestorMaterias.getListaTareas().size(); i++) {
+            Tarea t = gestorMaterias.getListaTareas().get(i);
+            listaTareas += (i + 1) + ". " + t.getNombreTarea() +
+                    " - Materia: " + t.getMateria().getNombreMateria() +
+                    " - Prioridad: " + t.getPrioridad() + "\n";
         }
 
-        if (tareaEncontrada == null) {
-            JOptionPane.showMessageDialog(null, "No se encontró una tarea para esa materia.");
+        int indice = Integer.parseInt(JOptionPane.showInputDialog(listaTareas)) - 1;
+
+        if (indice < 0 || indice >= gestorMaterias.getListaTareas().size()) {
+            JOptionPane.showMessageDialog(null, "Número de tarea no válido.");
             return;
         }
+
+        Tarea tareaSeleccionada = gestorMaterias.getListaTareas().get(indice);
 
         String dia = JOptionPane.showInputDialog("Día (Lunes/Martes/...):");
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
+        int duracion = Integer.parseInt(JOptionPane.showInputDialog("Duración en minutos:"));
 
-        for (RutinasEstudio rutina : gestorRutinas.getRutinaSemanal()) {
-            if(rutina.getDia().equals(dia) && rutina.getHoraFin().equals(horaInicio) && tareaEncontrada.getPrioridad().equals("alta")){
-                LocalTime inicio = LocalTime.parse(horaInicio);
-                LocalTime fin = LocalTime.parse(horaFin);
-                LocalTime inicioMas15 = inicio.plusMinutes(15);
-                LocalTime finMas15 = fin.plusMinutes(15);
-                String inicioString = inicioMas15.format(DateTimeFormatter.ofPattern("HH:mm"));
-                String finString = finMas15.format(DateTimeFormatter.ofPattern("HH:mm"));
-
-                horaInicio = inicioString;
-                horaFin = finString;
-            }
-
-        }
-
-
-        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, 1, tareaEncontrada);
+        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, duracion, tareaSeleccionada);
         gestorRutinas.agregarSesion(sesion);
         JOptionPane.showMessageDialog(null, "Sesión agregada correctamente a la rutina.");
     }
 
-    // ─── VER RUTINA ──────────────────────────────────────
     static void verRutina() {
         if (gestorRutinas.getRutinaSemanal().isEmpty()) {
             JOptionPane.showMessageDialog(null, "No hay sesiones en la rutina aún.");
@@ -190,7 +227,6 @@ public class MainUsuarios {
         JOptionPane.showMessageDialog(null, texto);
     }
 
-    // ─── REPROGRAMAR SESIÓN ──────────────────────────────
     static void reprogramarSesion() {
         String nombreMateria = JOptionPane.showInputDialog("Materia a reprogramar:");
         String nuevoDia = JOptionPane.showInputDialog("Nuevo día:");
@@ -201,7 +237,6 @@ public class MainUsuarios {
         JOptionPane.showMessageDialog(null, resultado);
     }
 
-    // ─── MARCAR CUMPLIDA ─────────────────────────────────
     static void marcarCumplida() {
         String nombreMateria = JOptionPane.showInputDialog("Materia de la sesión cumplida:");
         String resultado = gestorRutinas.marcarCumplida(nombreMateria);

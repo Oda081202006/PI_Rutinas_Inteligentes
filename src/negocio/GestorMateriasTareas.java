@@ -17,7 +17,6 @@ public class GestorMateriasTareas {
         this.listaTareas = new ArrayList<>();
     }
 
-    // RF3: Registrar materia
     public String registrarMateria(String nombreMateria, String nivelDificultad,
                                    double calificacionActual, double notaMinimaPersonal) {
         if (notaMinimaPersonal <= 0) {
@@ -35,7 +34,6 @@ public class GestorMateriasTareas {
         return generarMensajeRendimiento(calificacionActual, notaMinimaPersonal);
     }
 
-    // RF4: Registrar tarea
     public String registrarTarea(String nombreTarea, String fechaEntrega, String nombreMateria) {
         Materia materiaEncontrada = buscarMateria(nombreMateria);
 
@@ -59,6 +57,49 @@ public class GestorMateriasTareas {
         listaTareas.add(tarea);
 
         return "Tarea registrada correctamente. Prioridad asignada: " + prioridad;
+    }
+
+    public String marcarTareaCompletada(int indice) {
+        if (indice < 0 || indice >= listaTareas.size()) {
+            return "Error: Número de tarea no válido.";
+        }
+
+        Tarea t = listaTareas.get(indice);
+
+        if (t.isCompletada()) {
+            return "La tarea '" + t.getNombreTarea() + "' ya estaba marcada como completada.";
+        }
+
+        t.setCompletada(true);
+        return "Tarea '" + t.getNombreTarea() + "' de la materia '" +
+                t.getMateria().getNombreMateria() + "' marcada como completada. ✅";
+    }
+
+    public String eliminarMateria(int indice) {
+        if (indice < 0 || indice >= listaMaterias.size()) {
+            return "Error: Número de materia no válido.";
+        }
+
+        Materia materiaAEliminar = listaMaterias.get(indice);
+
+        listaTareas.removeIf(t -> t.getMateria().getNombreMateria()
+                .equalsIgnoreCase(materiaAEliminar.getNombreMateria()));
+
+        listaMaterias.remove(indice);
+
+        return "Materia '" + materiaAEliminar.getNombreMateria() +
+                "' y sus tareas asociadas eliminadas correctamente.";
+    }
+
+    public String eliminarTarea(int indice) {
+        if (indice < 0 || indice >= listaTareas.size()) {
+            return "Error: Número de tarea no válido.";
+        }
+
+        Tarea tareaAEliminar = listaTareas.get(indice);
+        listaTareas.remove(indice);
+
+        return "Tarea '" + tareaAEliminar.getNombreTarea() + "' eliminada correctamente.";
     }
 
     private Materia buscarMateria(String nombreMateria) {
@@ -93,7 +134,7 @@ public class GestorMateriasTareas {
 
     private String generarMensajeRendimiento(double calificacionActual, double notaMinimaPersonal) {
         if (calificacionActual < notaMinimaPersonal) {
-            return "Materia registrada. Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
+            return "Materia registrada. ⚠️ Estás por debajo de tu nota mínima, se recomienda priorizar esta materia.";
         } else if (calificacionActual - notaMinimaPersonal < 1) {
             return "Materia registrada. Advertencia: estás cerca de tu nota mínima.";
         } else {
