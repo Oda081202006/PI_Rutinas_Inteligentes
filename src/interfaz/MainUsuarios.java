@@ -124,8 +124,28 @@ public class MainUsuarios {
     }
 
     static void registrarTarea() {
+        if (gestorMaterias.getListaMaterias().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Primero debes registrar al menos una materia.");
+            return;
+        }
+
         String nombreTarea = JOptionPane.showInputDialog("Nombre de la tarea:");
-        String nombreMateria = JOptionPane.showInputDialog("Materia asociada:");
+
+        // Mostrar lista de materias para elegir
+        String listaMaterias = "Seleccione la materia asociada:\n\n";
+        for (int i = 0; i < gestorMaterias.getListaMaterias().size(); i++) {
+            Materia m = gestorMaterias.getListaMaterias().get(i);
+            listaMaterias += (i + 1) + ". " + m.getNombreMateria() + "\n";
+        }
+
+        int indiceMateria = Integer.parseInt(JOptionPane.showInputDialog(listaMaterias)) - 1;
+
+        if (indiceMateria < 0 || indiceMateria >= gestorMaterias.getListaMaterias().size()) {
+            JOptionPane.showMessageDialog(null, "Número de materia no válido.");
+            return;
+        }
+
+        String nombreMateria = gestorMaterias.getListaMaterias().get(indiceMateria).getNombreMateria();
 
         String fechaEntrega = "";
         while (true) {
