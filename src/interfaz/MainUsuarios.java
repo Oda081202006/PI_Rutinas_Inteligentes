@@ -253,9 +253,8 @@ public class MainUsuarios {
         String dia = JOptionPane.showInputDialog("Día (Lunes/Martes/...):");
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
-        int duracion = Integer.parseInt(JOptionPane.showInputDialog("Duración en minutos:"));
 
-        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, duracion, tareaSeleccionada);
+        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, 0, tareaSeleccionada);
         gestorRutinas.agregarSesion(sesion);
         JOptionPane.showMessageDialog(null, "Sesión agregada correctamente a la rutina.");
     }
@@ -264,9 +263,8 @@ public class MainUsuarios {
         String dia = JOptionPane.showInputDialog("Día (Lunes/Martes/...):");
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
-        int duracion = Integer.parseInt(JOptionPane.showInputDialog("Duración en minutos:"));
 
-        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, duracion, null);
+        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, 0, null);
         gestorRutinas.agregarSesion(sesion);
         JOptionPane.showMessageDialog(null, "Sesión de estudio agregada correctamente a la rutina.");
     }
@@ -297,8 +295,39 @@ public class MainUsuarios {
     }
 
     static void marcarCumplida() {
-        String nombreMateria = JOptionPane.showInputDialog("Materia de la sesión cumplida:");
-        String resultado = gestorRutinas.marcarCumplida(nombreMateria);
-        JOptionPane.showMessageDialog(null, resultado);
+        if (gestorRutinas.getRutinaSemanal().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay sesiones en la rutina.");
+            return;
+        }
+
+        String lista = "Seleccione la sesión a marcar como cumplida:\n\n";
+        for (int i = 0; i < gestorRutinas.getRutinaSemanal().size(); i++) {
+            RutinasEstudio s = gestorRutinas.getRutinaSemanal().get(i);
+            String descripcion;
+            if (s.getTarea() == null) {
+                descripcion = "Sesión de estudio";
+            } else {
+                descripcion = s.getTarea().getMateria().getNombreMateria() +
+                        " - Tarea: " + s.getTarea().getNombreTarea();
+            }
+            lista += (i + 1) + ". " + s.getDia() + " " + s.getHoraInicio() + "-" + s.getHoraFin() +
+                    " | " + descripcion +
+                    " | " + (s.isCumplida() ? "CUMPLIDA" : "PENDIENTE") + "\n";
+        }
+
+        int indice = Integer.parseInt(JOptionPane.showInputDialog(lista)) - 1;
+
+        if (indice < 0 || indice >= gestorRutinas.getRutinaSemanal().size()) {
+            JOptionPane.showMessageDialog(null, "Número no válido.");
+            return;
+        }
+
+        RutinasEstudio sesion = gestorRutinas.getRutinaSemanal().get(indice);
+        if (sesion.isCumplida()) {
+            JOptionPane.showMessageDialog(null, "Esta sesión ya estaba marcada como cumplida.");
+        } else {
+            sesion.setCumplida(true);
+            JOptionPane.showMessageDialog(null, "Sesión marcada como cumplida.");
+        }
     }
 }
