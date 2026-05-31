@@ -1,5 +1,7 @@
 package modelo;
 
+import java.util.ArrayList;
+
 public class Usuario {
 
     private String nombreCompleto;
@@ -13,7 +15,9 @@ public class Usuario {
     private int intentosFallidos;
     private boolean cuentaBloqueada;
 
-
+    // RELACIONES
+    private ArrayList<Materia> materias;
+    private ArrayList<RutinasEstudio> rutinas;
 
     public Usuario(String nombreCompleto,
                    String correoElectronico,
@@ -36,6 +40,9 @@ public class Usuario {
         this.intentosFallidos = 0;
         this.cuentaBloqueada = false;
 
+        // Inicializar relaciones
+        this.materias = new ArrayList<>();
+        this.rutinas = new ArrayList<>();
     }
 
     public String getNombreCompleto() {
@@ -116,5 +123,23 @@ public class Usuario {
 
     public void setCuentaBloqueada(boolean cuentaBloqueada) {
         this.cuentaBloqueada = cuentaBloqueada;
+    }
+
+    // GETTERS Y SETTERS DE RELACIONES
+
+    public ArrayList<Materia> getMaterias() {
+        return materias;
+    }
+
+    public void setMaterias(ArrayList<Materia> materias) {
+        this.materias = materias;
+    }
+
+    public ArrayList<RutinasEstudio> getRutinas() {
+        return rutinas;
+    }
+
+    public void setRutinas(ArrayList<RutinasEstudio> rutinas) {
+        this.rutinas = rutinas;
     }
 }
