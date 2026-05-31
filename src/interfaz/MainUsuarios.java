@@ -9,6 +9,8 @@ import negocio.GestorRutinas;
 import negocio.GestorUsuario;
 import javax.swing.JOptionPane;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainUsuarios {
 
@@ -248,14 +250,22 @@ public class MainUsuarios {
     }
 
     static void agregarSesionConTarea() {
-        if (gestorMaterias.getListaTareas().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "No hay tareas registradas.");
+        // Filtrar solo tareas pendientes
+        List<Tarea> tareasPendientes = new ArrayList<>();
+        for (Tarea t : gestorMaterias.getListaTareas()) {
+            if (!t.isCompletada()) {
+                tareasPendientes.add(t);
+            }
+        }
+
+        if (tareasPendientes.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay tareas pendientes para agregar a la rutina.");
             return;
         }
 
         String listaTareas = "Seleccione la tarea para la sesión:\n\n";
-        for (int i = 0; i < gestorMaterias.getListaTareas().size(); i++) {
-            Tarea t = gestorMaterias.getListaTareas().get(i);
+        for (int i = 0; i < tareasPendientes.size(); i++) {
+            Tarea t = tareasPendientes.get(i);
             listaTareas += (i + 1) + ". " + t.getNombreTarea() +
                     " - Materia: " + t.getMateria().getNombreMateria() +
                     " - Fecha entrega: " + t.getFechaEntrega() +
@@ -264,14 +274,13 @@ public class MainUsuarios {
 
         int indice = Integer.parseInt(JOptionPane.showInputDialog(listaTareas)) - 1;
 
-        if (indice < 0 || indice >= gestorMaterias.getListaTareas().size()) {
+        if (indice < 0 || indice >= tareasPendientes.size()) {
             JOptionPane.showMessageDialog(null, "Número de tarea no válido.");
             return;
         }
 
-        Tarea tareaSeleccionada = gestorMaterias.getListaTareas().get(indice);
+        Tarea tareaSeleccionada = tareasPendientes.get(indice);
 
-        // Pedir fecha exacta de la sesión
         String fechaSesion = "";
         while (true) {
             fechaSesion = JOptionPane.showInputDialog("Fecha de la sesión (dd/MM/yyyy):");
@@ -307,10 +316,8 @@ public class MainUsuarios {
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
 
-        // Validar conflicto de horario
         for (RutinasEstudio s : gestorRutinas.getRutinaSemanal()) {
-            if (s.getDia().equals(fechaSesion) &&
-                    s.getHoraInicio().equals(horaInicio)) {
+            if (s.getDia().equals(fechaSesion) && s.getHoraInicio().equals(horaInicio)) {
                 JOptionPane.showMessageDialog(null, "Ya tienes una sesión en ese horario, elige otro.");
                 return;
             }
@@ -322,6 +329,8 @@ public class MainUsuarios {
     }
 
     static void agregarSesionSinTarea() {
+        String nombreSesion = JOptionPane.showInputDialog("Nombre de la sesión (ej: Repasar apuntes, Leer capítulo...):");
+
         String fechaSesion = "";
         while (true) {
             fechaSesion = JOptionPane.showInputDialog("Fecha de la sesión (dd/MM/yyyy):");
@@ -352,18 +361,17 @@ public class MainUsuarios {
         String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
         String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
 
-        // Validar conflicto de horario
         for (RutinasEstudio s : gestorRutinas.getRutinaSemanal()) {
-            if (s.getDia().equals(fechaSesion) &&
-                    s.getHoraInicio().equals(horaInicio)) {
+            if (s.getDia().equals(fechaSesion) && s.getHoraInicio().equals(horaInicio)) {
                 JOptionPane.showMessageDialog(null, "Ya tienes una sesión en ese horario, elige otro.");
                 return;
             }
         }
 
         RutinasEstudio sesion = new RutinasEstudio(fechaSesion, horaInicio, horaFin, 0, null);
+        sesion.setNombreSesion(nombreSesion);
         gestorRutinas.agregarSesion(sesion);
-        JOptionPane.showMessageDialog(null, "Sesión de estudio agregada correctamente a la rutina.");
+        JOptionPane.showMessageDialog(null, "Sesión agregada correctamente a la rutina.");
     }
 
     static void verRutina() {
@@ -382,13 +390,75 @@ public class MainUsuarios {
     }
 
     static void reprogramarSesion() {
-        String nombreMateria = JOptionPane.showInputDialog("Materia a reprogramar:");
-        String nuevoDia = JOptionPane.showInputDialog("Nuevo día:");
+        if (gestorRutinas.getRutinaSemanal().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay sesiones en la rutina.");
+            return;
+        }
+
+        String lista = "Seleccione la sesión a reprogramar:\n\n";
+        for (int i = 0; i < gestorRutinas.getRutinaSemanal().size(); i++) {
+            RutinasEstudio s = gestorRutinas.getRutinaSemanal().get(i);
+            String descripcion;
+            if (s.getTarea() == null) {
+                descripcion = s.getNombreSesion();
+            } else {
+                descripcion = s.getTarea().getNombreTarea() +
+                        " - Materia: " + s.getTarea().getMateria().getNombreMateria();
+            }
+            lista += (i + 1) + ". " + s.getDia() + " " + s.getHoraInicio() + "-" + s.getHoraFin() +
+                    " | " + descripcion + "\n";
+        }
+
+        int indice = Integer.parseInt(JOptionPane.showInputDialog(lista)) - 1;
+
+        if (indice < 0 || indice >= gestorRutinas.getRutinaSemanal().size()) {
+            JOptionPane.showMessageDialog(null, "Número no válido.");
+            return;
+        }
+
+        String nuevaFecha = "";
+        while (true) {
+            nuevaFecha = JOptionPane.showInputDialog("Nueva fecha (dd/MM/yyyy):");
+            String[] partes = nuevaFecha.split("/");
+
+            if (partes.length == 3) {
+                int dia = Integer.parseInt(partes[0]);
+                int mes = Integer.parseInt(partes[1]);
+                int anio = Integer.parseInt(partes[2]);
+
+                if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && anio >= 2026) {
+                    LocalDate fechaNueva = LocalDate.of(anio, mes, dia);
+                    LocalDate hoy = LocalDate.now();
+
+                    if (fechaNueva.isBefore(hoy)) {
+                        JOptionPane.showMessageDialog(null, "La fecha ya pasó, ingrese una fecha futura.");
+                    } else {
+                        break;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Fecha inválida, inténtelo de nuevo.");
+            }
+        }
+
         String nuevaHoraInicio = JOptionPane.showInputDialog("Nueva hora inicio (HH:mm):");
         String nuevaHoraFin = JOptionPane.showInputDialog("Nueva hora fin (HH:mm):");
 
-        String resultado = gestorRutinas.reprogramarSesion(nombreMateria, nuevoDia, nuevaHoraInicio, nuevaHoraFin);
-        JOptionPane.showMessageDialog(null, resultado);
+        for (int i = 0; i < gestorRutinas.getRutinaSemanal().size(); i++) {
+            RutinasEstudio s = gestorRutinas.getRutinaSemanal().get(i);
+            if (i != indice && s.getDia().equals(nuevaFecha) && s.getHoraInicio().equals(nuevaHoraInicio)) {
+                JOptionPane.showMessageDialog(null, "Ya tienes una sesión en ese horario, elige otro.");
+                return;
+            }
+        }
+
+        RutinasEstudio sesion = gestorRutinas.getRutinaSemanal().get(indice);
+        sesion.setDia(nuevaFecha);
+        sesion.setHoraInicio(nuevaHoraInicio);
+        sesion.setHoraFin(nuevaHoraFin);
+        JOptionPane.showMessageDialog(null, "Sesión reprogramada correctamente.");
     }
 
     static void marcarCumplida() {

@@ -12,6 +12,7 @@ public class RutinasEstudio {
     private boolean esDescanso;
     private boolean cumplida;
     private Tarea tarea;
+    private String nombreSesion;
 
     public RutinasEstudio(String dia, String horaInicio, String horaFin,
                           int duracionMinutos, Tarea tarea) {
@@ -22,11 +23,13 @@ public class RutinasEstudio {
         this.tarea = tarea;
         this.esDescanso = false;
         this.cumplida = false;
+        this.nombreSesion = "";
     }
 
     public RutinasEstudio(String dia, String horaInicio, String horaFin, int duracionMinutos) {
         this(dia, horaInicio, horaFin, duracionMinutos, null);
-        this.esDescanso = true;
+        this.esDescanso = false;
+        this.nombreSesion = "Sesión de estudio";
     }
 
     public String getDia() { return dia; }
@@ -63,6 +66,9 @@ public class RutinasEstudio {
     public Tarea getTarea() { return tarea; }
     public void setTarea(Tarea tarea) { this.tarea = tarea; }
 
+    public String getNombreSesion() { return nombreSesion; }
+    public void setNombreSesion(String nombreSesion) { this.nombreSesion = nombreSesion; }
+
     @Override
     public String toString() {
         if (esDescanso) {
@@ -71,7 +77,8 @@ public class RutinasEstudio {
         }
         if (tarea == null) {
             return dia + " " + horaInicio + "-" + horaFin
-                    + " | Sesión de estudio" + " | " + duracionMinutos + " min"
+                    + " | " + nombreSesion
+                    + " | " + duracionMinutos + " min"
                     + " | Cumplida: " + cumplida;
         }
         return dia + " " + horaInicio + "-" + horaFin
