@@ -40,11 +40,18 @@ public class RutinasEstudio {
 
     public int getDuracionMinutos() { return duracionMinutos; }
     public void setDuracionMinutos(int duracionMinutos) {
-        LocalTime inicio = LocalTime.parse(horaInicio);
-        LocalTime fin = LocalTime.parse(horaFin);
-
-        Duration duracion = Duration.between(inicio, fin);
-        this.duracionMinutos = (int) duracion.toMinutes();
+        try {
+            if (horaInicio != null && horaFin != null && !horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                LocalTime inicio = LocalTime.parse(horaInicio);
+                LocalTime fin = LocalTime.parse(horaFin);
+                Duration duracion = Duration.between(inicio, fin);
+                this.duracionMinutos = (int) duracion.toMinutes();
+            } else {
+                this.duracionMinutos = 0;
+            }
+        } catch (Exception e) {
+            this.duracionMinutos = 0;
+        }
     }
 
     public boolean isEsDescanso() { return esDescanso; }
@@ -61,6 +68,11 @@ public class RutinasEstudio {
         if (esDescanso) {
             return dia + " " + horaInicio + "-" + horaFin
                     + " | DESCANSO (" + duracionMinutos + " min)";
+        }
+        if (tarea == null) {
+            return dia + " " + horaInicio + "-" + horaFin
+                    + " | Sesión de estudio" + " | " + duracionMinutos + " min"
+                    + " | Cumplida: " + cumplida;
         }
         return dia + " " + horaInicio + "-" + horaFin
                 + " | " + tarea.getMateria().getNombreMateria()

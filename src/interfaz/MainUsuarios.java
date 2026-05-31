@@ -199,8 +199,23 @@ public class MainUsuarios {
     }
 
     static void agregarSesion() {
+        String opcionTarea = JOptionPane.showInputDialog(
+                "¿Deseas crear una sesión con tarea o sin tarea?\n" +
+                        "1. Con tarea\n" +
+                        "2. Sin tarea");
+
+        if ("1".equals(opcionTarea)) {
+            agregarSesionConTarea();
+        } else if ("2".equals(opcionTarea)) {
+            agregarSesionSinTarea();
+        } else {
+            JOptionPane.showMessageDialog(null, "Opción no válida.");
+        }
+    }
+
+    static void agregarSesionConTarea() {
         if (gestorMaterias.getListaTareas().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Primero debes registrar al menos una tarea.");
+            JOptionPane.showMessageDialog(null, "No hay tareas registradas.");
             return;
         }
 
@@ -231,6 +246,17 @@ public class MainUsuarios {
         JOptionPane.showMessageDialog(null, "Sesión agregada correctamente a la rutina.");
     }
 
+    static void agregarSesionSinTarea() {
+        String dia = JOptionPane.showInputDialog("Día (Lunes/Martes/...):");
+        String horaInicio = JOptionPane.showInputDialog("Hora inicio (HH:mm):");
+        String horaFin = JOptionPane.showInputDialog("Hora fin (HH:mm):");
+        int duracion = Integer.parseInt(JOptionPane.showInputDialog("Duración en minutos:"));
+
+        RutinasEstudio sesion = new RutinasEstudio(dia, horaInicio, horaFin, duracion, null);
+        gestorRutinas.agregarSesion(sesion);
+        JOptionPane.showMessageDialog(null, "Sesión de estudio agregada correctamente a la rutina.");
+    }
+
     static void verRutina() {
         if (gestorRutinas.getRutinaSemanal().isEmpty()) {
             JOptionPane.showMessageDialog(null, "No hay sesiones en la rutina aún.");
@@ -240,8 +266,8 @@ public class MainUsuarios {
                 "       RUTINA SEMANAL\n" +
                 "════════════════════════════\n";
         for (RutinasEstudio s : gestorRutinas.getRutinaSemanal()) {
-            String prioridad = gestorRutinas.calcularPrioridad(s);
-            texto += s + (s.isEsDescanso() ? "" : " | Prioridad: " + prioridad) + "\n";
+            String prioridad = (s.isEsDescanso() || s.getTarea() == null) ? "" : gestorRutinas.calcularPrioridad(s);
+            texto += s + (prioridad.isEmpty() ? "" : " | Prioridad: " + prioridad) + "\n";
         }
         JOptionPane.showMessageDialog(null, texto);
     }

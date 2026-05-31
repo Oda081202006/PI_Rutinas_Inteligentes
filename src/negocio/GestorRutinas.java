@@ -38,7 +38,7 @@ public class GestorRutinas {
 
     public String marcarCumplida(String nombreMateria) {
         for (RutinasEstudio s : rutinaSemanal) {
-            if (!s.isEsDescanso()
+            if (!s.isEsDescanso() && s.getTarea() != null
                     && s.getTarea().getMateria().getNombreMateria().equalsIgnoreCase(nombreMateria)) {
                 s.setCumplida(true);
                 return "Sesión de '" + nombreMateria + "' marcada como cumplida.";
@@ -50,7 +50,7 @@ public class GestorRutinas {
     public String reprogramarSesion(String nombreMateria, String nuevoDia,
                                     String nuevaHoraInicio, String nuevaHoraFin) {
         for (RutinasEstudio s : rutinaSemanal) {
-            if (!s.isEsDescanso()
+            if (!s.isEsDescanso() && s.getTarea() != null
                     && s.getTarea().getMateria().getNombreMateria().equalsIgnoreCase(nombreMateria)) {
                 s.setDia(nuevoDia);
                 s.setHoraInicio(nuevaHoraInicio);
@@ -66,6 +66,7 @@ public class GestorRutinas {
         if (rutinaSemanal.isEmpty()) {
             System.out.println("La rutina está vacía.");
             return;
+
         }
         System.out.println("===== RUTINA SEMANAL =====");
         for (RutinasEstudio s : rutinaSemanal) {
